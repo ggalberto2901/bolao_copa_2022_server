@@ -1,0 +1,933 @@
+
+=====================================================================
+AULA1
+=====================================================================
+
+Link Figma do Projeto
+https://www.figma.com/community/file/1169028343875283461
+
+============ SETUP BACKEND ===============
+Dentro da pasta server rodar 
+npm init -y
+
+Depois instalar o package typescript com dependencia de desenvolvimento. Ele funciona como um compilador de codigos.
+npm i typescript -D
+Depois disto setar o typescript com o comando
+npx tsc --init
+Isto faz criar um arquivo chamado tsconfig.json. Alterar este arquivo 
+propriedade target para "es2020"
+Vamos precisar compilar nosso programa typescript para javascript
+
+Vamos instalar o framework fastify. Parecido com o express
+npm i fastify
+
+Se fossemos compilar o codigo basta executar o comando
+npx tsc. Isto gera um arquivo server.js
+E depois rodar node src/server.js funciona.
+Para evitar de ficar compilando o codigo toda hora mudaremos instalaremos a dependencia tsx com o comando 
+npm i tsx -D
+E alterar o arquivo package.json e inserir o pedaco
+"scripts": {
+    "dev": "tsx watch src/server.ts"
+  }
+
+  Apos isto podemos rodar npm run dev e executa a compilacao e execucao do arquivo server.ts
+  A opcao watch faz a atualizacao dos arquivos ter efeito imediato e nao precisar executar o comando acima a cada atualizacao
+
+  Instalei no Chrome a extensao json viewer. 
+
+  Agora iremos instalar o Prisma. Ele é o cara que nos ajudara com o banco de dados
+  Split o terminal
+  npm i prisma -D
+  npm i @prisma/client 
+
+  Agora vamos executar comando 
+  npx prisma init --datasource-provider SQLite
+  Isto cria 2 coisas
+  1. Pasta prisma. Dentro da pasta um arquivo chamado schema.prisma. Neste arquivo tem as configuracoes do banco de dados e os scripts do banco de dados. Prisma gerencia para a gente. O prisma é um ORM
+  Instalei a extensao do Visual Code chamada prisma
+  2. arquivo .env na raiz que define variaveis de ambiente
+
+  Apos criar a primeira tabela no arquivo schema.prisma executar o comando
+  npx prisma migrate dev
+  isto cria um migration que é versionamento do banco de dados
+  Apos a execucao do comando é criada uma pasta chamada migrations dentro da pasta prisma
+
+  Agora para visualizar o banco de dados basta executar o comando
+  npx prisma studio
+  Isto abre a visualizacao do banco na porta 5555
+  localhost:5555
+  Dentro do banco inserir um registro dentro do banco de dados.
+
+  Criamos a rota para visualizar a quantidade de registros da tabela dentro do arquivo server.ts
+
+  Para crirar o diagrama de entidade relacionamento basta instalar os pacotes abaixo. O mermaid é um projeto para geracao de diagramas
+  npm i prisma-erd-generator @mermaid-js/mermaid-cli -D
+  Apos a instalacao criar no arquivo schema.prisma as seguintes linhas
+  generator erd {
+  provider = "prisma-erd-generator"
+}
+
+Apos isto executar o comando npx prisma generate
+isto criara o arquivo ERD.svg que pode ser aberto no browser para visualizacao
+
+Para finalizar o setup do backend instalaremos 2 bibliotecas
+1. npm i @fastify/cors. 
+Cors serve para colocarmos seguranca de quem pode acessar nosso backend
+Apos instalar temos que configurar o cors incluindo o seu acesso no arquivo server.ts
+
+2. Para funcionar a parte mobile precisamos colocar a opcao host: '0.0.0.0' no metodo listen no arquivo server.ts
+
+==================================
+
+============SETUP FRONTEND==================
+React. Maneira facil de trabalhar com componetizacao de aplicacao. Exemplo twitter. Cada twit tem uma estrutura.
+Next.js (nextjs.org). Usado por trazer o conceito de Server Side Rendler para dentro do front end. Ele traz por detras do pano um servidor Node para servir como backend muito especifico (permitir a renderizacao da pagina sem usar javascript diretamente). Quem fornece a interface web é o servidor node que o next sobe. Assim permite a indexacao do site das aplicacoes construidas em Reactive puro.
+
+Muitas vezes os crowlers como o google acessam as aplicacoes com a opcao de javascript desabilitada. O Nextjs ajuda o seu site a nao ficar fantasma perante os crowlers
+
+
+O Nextjs é um framework por cima do React. É igual o laravel para o PHP
+React Dom é para WEB
+
+
+Para criar o projeto nextjs executar o comando
+- npx create-next-app@latest --use-npm
+Escolher sim para typescript e ESLink
+
+Criou uma pasta web
+Apagar a pasta Styles e o arquivo README
+Apagar o conteudo da pasta public
+Apagar a pasta pasta/api
+
+O arquivo principal é o arquivo index.tsx que tem um metodo home que retorna um 
+JSX que é Javascript com XML (HTML)
+TSX é typescript com JSX
+
+No arquivo index.tsx apagar o conteudo do metodo Home e coloque h1
+
+Executar o comando npm run dev e um servidor subira na porta 3000
+
+Dentro da pasta pages cada arquivo tsx vira uma rota
+Por exemplo criei um arquivo users.tsx que pode ser acessado na URL localhost:3000/users. Nao vamos usar este conceito mas é bom saber que pode criarmos rotas deste jeito
+
+===============
+========= SETUP Mobile
+
+React Native é para mobile (reactnative.dev). Interface nativa.
+No reactive renderizamos uma imagem em um componente Image. No android sera renderizado no imageview e no IOS em UIImageView
+
+Expo (docs.expo.dev) é uma tecnologia que facilita o nosso ambiente de desenvolvimento
+
+Acessar o README do diretorio mobile/README para instalar ambiente de desenvolvimento e emuladores
+
+Apos isto executar o comando dentro do diretorio raiz para criar a nossa aplicacao mobile
+npx create-expo-app nlwcopamobile.
+Isto criara a pasta nlwcopamobile no mesmo nivel de server e web. Depois renomear para mobile de novo.
+O projeto foi criado em js. Precisamos alterar para Type script. Para isto:
+1. Devemos mudar o arquivo App.js para App.tsx
+2. Criar um arquivo tsconfig.json. Nao precisa colocar nada dentro dele
+Entrar na pasta mobile e executar
+npx expo start
+Isto gerara um QRCODE. aponte a camera do seu celular e abra no app Expo Go a sua aplicacao.
+Se quiser rodar no emulador local IOS digitar i. Nao consegui rodar no simulador. Mas no app aparece de Boa.
+
+O arquivo principal é o APP.tsx. Lá tem um metodo que cria a primeira tela
+ Seguir os passos
+ 1. Importar os assets fornecidos.
+ 2. Criar pasta src e dentro dela assets. Inserir o arquivo logo.svg
+ 3. Configurar a Splash Screen. Esta em app.json. Trocar as 2 propriedades abaixo para
+      "resizeMode": "cover",
+      "backgroundColor": "#000000"
+4. Instalar o NativeBase(nativebase.io). Ele tem varios componentes prontos para serem usados. Mas deveria usar a versao 3.4.19
+npm install native-base --legacy-peer-deps
+Depois
+npx expo install react-native-svg@12.1.1
+Depois
+npm install native-base --legacy-peer-deps
+Depois 
+npx expo install react-native-safe-area-context@3.3.2
+5. Alterar o package.json para incluir no final do arquivo a linha
+ "overrides": {
+    "react": "18.0.0",
+  },
+  e Alterar para
+    "react": "18.0.0",
+6. No arquivo App.tsx inserir
+import { NativeBaseProvider} from "native-base"; e
+Envolver o codigo atual na tag para usarmos tudo do Native Base na nossa aplicacao
+<NativeBaseProvider>
+      Codigo Atual
+    </NativeBaseProvider>
+
+7. Vamos trocar os componentes padrao do reactive native para podermos customizá-los atraves de propriedades
+Substituir a tag View por Vstack
+<VStack flex={1} bgColor="fuchsia.400" alignItems="center" justifyContent="center">
+
+Apagar o Text do react-native e usar o text do native-base.
+Mudar para estas 2 linhas
+import { StyleSheet, View } from 'react-native';
+
+import { NativeBaseProvider, Text, VStack} from "native-base";
+
+Mexer no Text retirando o styles
+      <Text color="black" fontSize={24}>
+        Meu primeiro APP!
+      </Text>
+
+8. Customizar o tema do NativeBase. 
+Criar pasta styles dentro de src
+Criar arquivo themes.ts
+Inserir o conteudo dado na aula e disponivel em https://gist.github.com/rodrigorgtic/ae07dfcffb66b67247e26e0189eee051
+Colocar a linha import { THEME } from './src/styles/theme'; 
+Depois alterar a linha para <NativeBaseProvider theme={THEME}>
+Alterar a linha <VStack flex={1} bgColor="gray.300" alignItems="center" justifyContent="center">
+
+9. Instalar fontes personalizaveis. Precisamos importar a fonte Roboto presente no arquivo Theme.ts
+Buscar no google fonts (https://fonts.google.com/)
+Procurar por Roboto. Visualizar
+Depois instalar o expo fonts com o comando
+npx expo install expo-font @expo-google-fonts/roboto
+
+10. Garantir o carregamento das fontes
+Inserir as linhas
+import { useFonts, Roboto_400Regular, Roboto_500Medium, Roboto_700Bold } from '@expo-google-fonts/roboto';
+e
+const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_500Medium, Roboto_700Bold })
+Este comando acima garante que a fonte é carregada no dispositivo caso ele ainda nao o tenha
+Criar a pasta components dentro de src
+Criar o arquivo Loading.tsx
+import { Center, Spinner } from 'native-base';
+
+11. Criar componente de Loading
+
+export function Loading(){
+    return (
+        <Center flex={1} bg="gray.900">
+            <Spinner color="yellow.500" />
+        </Center>   
+    )
+}
+
+Alterar o arquivo App.tsx e inserir as linhas
+import { Loading } from './src/components/Loading';
+
+12. Criar a tela de Signin
+Criar pasta screens
+Criar arquivo Signin.tsx e colocar o conteudo abaixo
+import { Center, Text } from "native-base";
+
+import { Center, Text } from "native-base";
+
+export function Signin(){
+    return(
+    <Center flex={1} bgColor="gray.900">
+        <Text color="white" fontSize={24} fontFamily="heading">
+          SignIn
+        </Text>
+    </Center>
+    )
+}
+13. Incluir ele no primeiro arquivo e caso já tenha va para a tela de Signin
+No arquivo App.tsx deixar da seguinte forma o return do APP()
+
+  return (
+    <NativeBaseProvider theme={THEME}>
+        {
+          fontsLoaded ? <Signin /> : <Loading /> 
+        }
+    </NativeBaseProvider>
+  );
+
+  14. Customizar a StatusBar. O StatusBar é a parte de cima do dispositivo que aparece o sinal de wifi, bateria camera etc
+
+Criar linhas 
+import { NativeBaseProvider, StatusBar } from "native-base";
+e dentro de NativeBaseProvider colocar o componente
+        <StatusBar 
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
+
+FIM DA AULA 1
+
+=====================================================================
+AULA2
+=====================================================================
+A. Continuando o backend
+1. Estrutura do Banco e Relacionamentos
+Configurar o banco de dados para construir as tabelas
+Alterar o arquivo schema.prisma
+21:43 do video para rodar as alteracoes
+npx prisma migrate dev
+Depois de executar dentro da pasta prisma/migrations tera um outro diretorio contendo um arquivo contendo todos os comandos SQLs
+Rodar depois nopx prisma studio para visualizar as tabelas
+Note que o arquivo ERD.svg foi alterado
+
+2. Criando o seed do banco de dados 23:03
+O arquivo de seed popula o banco de dados com dados ficticios
+Dentro da pasta prisma criar o arquivo seed.ts
+Povoar com o conteudo ate 33:49
+Alterar o arquivo package.json e incluir as linhas
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+    },
+  Rodar o comando 
+  npx prisma db seed
+  Entrando no banco via npx prisma studio verá que os dados foram carregados
+
+3. Criacao de Novo Bolao 35:54
+Mexer no arquivo server.ts
+Criar nova rota
+//Nova rota para criar um bolao. Aula 2
+fastify.post('/pools', async (request, reply)=>{
+
+   const {title} = request.body
+
+   return {title}
+})
+Roda npm run dev
+Nao conseguimos fazer teste desta rota usando o browser pois todas as rotas que ele usa é GET
+Podemos usar o Postman. Mas vamos usar o insomnia.rest
+Baixar ele 
+Abrir ele
+Clicar em Create->Request Collection. Da o nome NLWCopa (Aulas)
+Criar Http Request. Cria um nome e coloca a URL http://localhost:3333/pools
+Clica em Body e escolhe JSON
+Entra com os valores
+{
+	"title": "Bolao do Diegao"
+}
+Clicar em Send. Vc vera que retornara 200
+
+Para validar se um valor nulo é enviado instalar a biblioteca zod que é um schema validation
+npm i zod
+importa ele no arquivo e depois coloca o codigo dentro da rota post
+
+   const createPoolBody = z.object({
+    title: z.string(),
+   })
+   const {title} = createPoolBody.parse(request.body)
+
+Se tentar criar com title null agora da erro
+
+Por fim para criar o bolao 
+inserir as linhas abaixo.
+Nelas vc vai notar que para criar o codigo do bolao foi usada a biblioteca short-unique-id (npmjs.com/package/short-unique-id). Instalar a biblioteca via npm i short-unique-id
+
+4.Contagem de Usuarios 48:43
+
+5.Contagem de Palpites 49:30
+Organizar o insonmia em pastas para executar os Gets
+
+B. Aplicacao WEB 50:21
+
+Inicialmente criar pasta src e mover a pasta pages para dentro de src
+Criar pasta assets e styles dentro de src
+
+Entrar no figma. la tem varios arquivos que podem ser baixados da pasta das aulas e copiar para src/assets
+
+Depois instalar os pacotes abaixo no projeto web com dependencia de Desenvolvimento.
+Muitas empresas estao usando o tailwindcss
+npm install -D tailwindcss postcss autoprefixer
+
+Depois de instalar executar 
+npx tailwindcss init -p
+
+Isto cria um arquivo de configuracao chamado tailwindcss.config.js
+Alterar este arquivo a propriedade content para dizer quais arquivos serão estilizados, ou seja, todos os arquivos de componentes dentro da pasta src
+content: [
+    './src/**/*.tsx',
+  ]
+
+Criar na pasta styles o arquivo global.css
+Instalar a extensao postCSS language support no visual studio core
+Instalar a extensao tailwind CSS IntelliSense no visual studio core
+
+Preencher o arquivo global.css com as 3 linhas
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+Importar este arquivo css no arquivo _app.tsx. Este arquivo é carregado em todas as paginas do next
+Entao é o melhor lugar para colocar coisas para a aplicacao como um todo como estilizacao etc
+import '../styles/globals.css'
+Para ver se esta funcionando altere a linha abaixo no arquivo index.tsx colocando a propriedade className
+<h1 className="text-violet-500 font-bold text-xl">Contagem: {props.count}</h1>
+
+Importar a fonte Roboto
+Entrar no link ()
+https://fonts.google.com/specimen/Roboto
+Rolar e escolher 
+Regular 400
+Bold 700
+Copia 
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+Note que nao existe um arquivo que conseguimos mexer como html
+Para isto criamos o arquivo
+_document.tsx dentro de pages
+Assim crie este arquivo para testar e copie as 3 linhas acima lá
+
+Alterar o tailwindcss.config.js na propriedade theme
+
+theme: {
+    extend: {
+      fontFamily: {
+        sans: 'Roboto, sans-serif'
+      },
+      
+      colors:{
+        gray:{
+          900: "#121214"
+        }
+      }
+
+    },
+      
+
+  },
+
+  1. Criar a estrutura html da pagina. Alterar o arquivo index.tsx no metodo Home(). 
+  a. Comentei muita coisa mas criei aestrutura do HTML sem a estilizacao.
+  b. Depois de criar a estrutura html com div, image, etc precisa estilizar. Ai entra as propriedades do div, etc
+  c. Criei uma nova cor no arquivo tailwindcss.config.js
+  d. Para criar a estilizacao precisa ir olhando o que está no figma para reproduzir no layout. Acaba em 1:36:30
+  e. 
+  Para colocar a imagem de fundo. Mover o arquivo app-bg.png para a pasta publica. Estar na pasta publica indica que ela pode ser acessada no endereco http://localhost:3000/app-bg.png
+  - Ir no arquivo tailwind.copnfig.js e criar a propriedade backgroundImage
+  - Ir no arquivo _document e alterar a seguinte linha
+
+  2. Criar a parte dinamica - Rotas Count 1:39:00
+  Descomentar o metodo getServerSideProps
+  Descomentar a interface
+  E colocar a quantidade de Boloes criados 
+  Depois instalar a biblioteca Axios
+  npm i axios
+  Criar dentro de src uma pasta chamada lib. Dentro da pasta criar um arquivo chamado axios.ts
+  Gerar o arquivo para conter a URL padrao
+  Alterar o arquivo index.tsx para usar o axios
+
+  3. Criar a parte dinamica - Rota para criar bolao 1:45:00
+  No form do html definir um evento
+  Para pegar dados do formulario vc precisa entender o conceito de estado no React que nada mais eh do que uma variavel
+
+  4. No final da aula tem um desafio para ler o getStaticProps ou inves de usar o  getServerSideProps para nao ficar chamando toda vez os metodos de count
+
+
+=====================================================================
+AULA3 03/11/2022
+=====================================================================
+Esta aula é para Criar as interfaces mobile e na aula 4 fazer as integracoes com o backend
+1. Por padrao os arquivos svg nao estao mostrados no reactive native. Vamos precisar das seguintes alteracoes
+a. A primeira a gente já fez quando executamos o comando 
+npx install react-native-svg@12.1.1
+b. 
+b1. vamos precisar instalar uma segunda biblioteca. Ver no link (https://github.com/kristerkari/react-native-svg-transformer)
+npm i react-native-svg-transformer
+b2. criar na raiz da aplicacao o arquivo metro.config.js
+b3. Pegar o conteudo do arquivo no github acima. Atencao para pegar o codigo do EXPO. Existem 2 codigos na pagina
+
+2. Criar a interface de autenticacao
+a. Acessar o arquivo Signin.tsx dentro de screens e importar o logo.svg
+b. Tipagem do SVG: 
+Quando importamos e visualizamos no app o VSCode reclama dizendo que estamos colocando uma imagem como sendo um componente. Entao vamos criar os nossos proprios tipos. Para isto criar a pasta @tyoes dentro de src. 
+- Nesta pasta criamos um arquivo svg.d.ts
+- O conteudo deste arquivo esta no github do item 1 na seccao Using TypeScript
+- Quando coloca o codigo no arquivo o VSCode para de reclamar
+c. Instalar a extensao do VSCODE Material Icon theme para deixar os arquivos com icones diferentes para cada extensao de arquivo
+d. Criar o botao.
+Como ele terá o mesmo layout para todas as telas iremos criar um componente padrao mas que pode sofrer mudanca de cor e titulo em cada tela
+- Criar o arquivo Button.tsx dentro da pasta components e estilar ele para ser utilizado em todos as telas. 
+Vai ate 30:10
+e. Criar o texto no final da tela
+A criacao da tela de Signin vai ate 33:05
+
+3. Contexto de Autenticacao
+Para que a aplicacao saiba se um usuario esta ou nao autenticado para acessar determinada rota usamos contexto. Por exemplo no arquivo App.tsx compartilhamos o uso do NativeBaseProvider e do Thema presente no arquivo src/styles/theme.ts. Só que o NativeBaseProvider é um contexto criado pelo Native Base. Agora precisamos construir nosso proprio contexto
+a. Criando contexto35:03
+No nosso caso foi mostrado que podemos compartilhar no contexto dados (do usuario) e uma funcao no caso de login
+- Criar pasta contexts dentro de src
+- Criar o arquivo AuthContext.tsx
+- Preencher este arquivo com o conteudo dele
+- Depois precisamos criar uma funcao pra prover este contexto. Ver dentro do codigo os comentarios
+
+b. Criando hook para compartilhar o contexto 42:12
+- Criar uma pasta dentro de src chamada hooks
+- Criar um arquivo chamado useAuth.tsx
+- Colocar o codigo nele
+
+c. Compartilhando dados atraves do contexto 44:12
+- Ir no arquivo App.tsx e colocar a tag <AuthContextProvider> depois de NativeBaseProvider
+- Para testar ir em Signin.tsx e alterar ele
+a. importar o hook
+b. Insere as 3 linhas em locais diferentes do codigo para acessar o contexto. Ou seja a pagina busca as informacoes de contexto de forma centralizada
+
+const { signIn, user } = useAuth();
+console.log('Dados do Usuario =>', user);
+onPress={signIn}
+
+4. Autenticacao com Google 48:07
+a. Conceito de Oauth
+O OAuth2 é um protocolo de autenticacao popular e considerado o mais seguro e completo que existe
+Fluxo:
+1. Registrar o aplicativo (nosso App) no Identity Provider. Neste caso na console da Google. Ela precisa saber qual é o app que esta usando os dados do usuario para se autenticar
+2. Usuario solicita a autenticacao. Isto faz com que nossa aplicacao va para segundo plano e o browser do usuario vem para o primeiro plano para o usuario se autenticar na pagina de autenticacao do Google
+3. Apos usuario informar os dados a API do Google valida a autenticacao
+4. Se autenticar devolve um token de autenticacao para o browser que ainda esta em primeiro plano
+5. Assim que o browser fechar há um Redirect Deep Link e volta este token para a aplicacao
+6. O nosso app recebe uma chave que é o token que identifica o usuario. Com esta chave o usuario tem acesso aos dados do perfil dele. Este token será enviado pelo app para nosso backend
+
+b. Instalando o expo-auth-session 51:32
+Link de apoio (docs.expo.dev/versions/latest/sdk/auth-session)
+Esta lib facilita muito o nosso processo de autenticacao
+npx expo install expo-auth-session expo-random
+
+c. Instalando o expo-web-broser 53:12
+Precisamos dele para garantir o processo de abertura e fechamento do browser
+npx expo install expo-web-browser
+
+d. Configurar o Oauth com Google 53:55
+1. Precisamos criar um schema
+Para isto entrar no arquivo app.json do projeto mobile e inserir a propriedade
+"scheme": "nlwcopamobile", depois da propriedade slug
+2. Acessar a console do Google via link
+https://console.cloud.google.com
+3. Na barra azul apos se logar criar um projeto novo. Colocar o nome como nlwcopamobile. Depois de criado selecione o projeto
+4. No menu lateral clicar no hamburguer e escolher APIs e Servicos e depois em Credenciais. 
+5. CLicar em Criar Credenciais ==> Id do cliente OAuth
+6. Antes de criar ha um botao para configurar a tela de consentimento. CLicar neste botao
+7. 
+- Escolher Externo
+- Nome do App: nlwcopamobile
+- Email: ggalberto_real12@yahoo.com.br
+- Dados de contato do desenvolvedor: ggalberto_real12@yahoo.com.br
+Na tela de Escopo (precisamos saber o que vamos usar do usuario)
+- Iremos escolher escopos nao confidenciais. CLicar no botao Adicionar ou Remover Escopos.
+- Escolher email e perfil do usuario e salvar e continuar
+- Nao criar nenhum usuario de teste e clicar e continuar
+- No resumo voltar para Dashboard
+Na tela do DashBoard clicar em Publicar o app
+Voltar para credenciais no menu lateral
+e agora criar credenciais => Id do client Oauth
+- No application Tyoe escolher Aplicativo da Web. Importante. 
+- Nome: nlwcopamobile
+- Em Origens Javascript autorizadas clicar no botao e adicionar https://auth.expo.io
+- Em URIs de redirecionamento autorizadas clicar no botao e adicionar 
+https://auth.expo.io/@ggalberto2901/nlwcopamobile
+
+OBS:
+Onde o your-username é o seu usuario no site do expo quando vc abaixa ele
+Para conseguir isto o rodrigo colocou um conjunto de codigos no contexto para descobrir 1:02:20
+import * as AuthSession from 'expo-auth-session'
+console.log(AuthSession.makeRedirectUri({ useProxy: true }));
+Depois basta se logar no expo 
+npx expo login
+ggalberto2901
+@Fazenda123
+Baixa e sobe o servidor e a URL será logada
+https://auth.expo.io/@ggalberto2901/nlwcopamobile
+
+Foi gerado o clientID
+575410639923-t40rif0ueeeg5t0m28093l2fc0h2gu9r.apps.googleusercontent.com
+
+ClientSecret
+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
+
+JSON
+
+e. Implementando autenticacao Google 01:06:08
+- Alterar o arquivo AuthContext.tsx e importar as libs e colocar a linha para garantir o redirecionamento do browser
+import * as WebBrowser from 'expo-web-browser';
+
+
+//Garante o redirecionamento do navegador
+WebBrowser.maybeCompleteAuthSession();
+
+- Depois importar o Google 
+import * as Google from 'expo-auth-session/providers/google'
+ e as linhas
+
+ // O retorno promptAsync permite iniciar o fluxo de autenticacao que sera realizado dentro da funcao signIn
+const [ request, response, promptAsync] = Google.useAuthRequest({
+        clientId:'575410639923-t40rif0ueeeg5t0m28093l2fc0h2gu9r.apps.googleusercontent.com',
+        redirectUri: AuthSession.makeRedirectUri({ useProxy: true }),
+        scopes: ['profile', 'email']
+    });
+
+- Criando um estado para ver se o usuario esta sendo autenticado
+importar useState do React no import e colocar esta linha abaixo na interface a ser compartilhada
+isUserLoading: boolean;
+Depois declarar isto
+const [ isUserLoading, setIsUserLoadinhg ] = useState(false);
+
+
+- Iniciar o fluxo de autenticacao dentro do metodo signIn
+try {
+            setIsUserLoadinhg(true);
+            //Esta funcao inicia o processo de autenticacao
+            await promptAsync();
+        } catch (error) {
+            console.log(error);
+            throw error;
+        } finally {
+            setIsUserLoadinhg(false);
+        }
+
+- Se vc rodar a aplicacao agora e clicar no botao de autenticacao sera direcionado para o browser fazer o login. 1:10:54
+
+- Vamos tratar o retorno e armazenar os dados do usuario caso haja sucesso
+a. Para isto criamos o user como um estado a ser compartilhado com toda a aplicacao
+//Criando um estado para o Usuario e compartilhar este com toda a aplicacao no return
+const [user, setUser] = useState<UserProps>({} as UserProps);
+
+b. Criar a funcao useEffect para escutar o retorno e obter o token de autenticacao
+
+    async function signInWithGoogle(access_token: string){
+        console.log('TOKEN DE AUTENTICACAO ===>', access_token);
+    }
+
+
+    //Esta funcao do react fica escutando se existe alguma resposta de autenticacao. 
+    //Esta funcao sempre eh executada quando nosso componente é renderizado
+    useEffect(() => {
+        if (response?.type === 'success' && response.authentication?.accessToken){
+            signInWithGoogle(response.authentication.accessToken);
+        }
+
+    }, [response]);
+
+c. O Token de autenticacao é a chave para buscar as informacoes do usuario. Tem um tempo de duracao mas sera usado para fazer buscas pelo usuario no nosso backend. Acabou em 1:16:34
+
+5. Interface para criar e encontrar o bolao.
+IMPORTANTE:
+O Rodrigo criou todos os componentes e colocou na pasta da aula. Eu tive que importar para a pasta components
+ Sao duas interfaces para serem criadas
+
+a. Criar dentro da pasta screens um arquivo chamado New.tsx
+
+b. Instalar a lib phosphor-react-native que é uma biblioteca de icones tambem. Link (https://phosphoricons.com/)
+npm install --save phosphor-react-native
+
+c. Povoar o arquivo New.tsx com os componentes e estilizar. Terminou o Criar bolao em 1:33:44
+
+d. Para a interface de Buscar Bolao pode reutilizar o New.tsx. Criar a screen Find.tsx
+Finalizou em 1:38:00
+
+6. Interface de Boloes
+É a interface de boloes do Figma
+Criado o arquivo Pools.tsx Terminou em 01:44:00
+
+
+=====================================================================
+AULA4 04/11/2022
+=====================================================================
+Esta aula é para finalizar todas as rotas do backend e alterar o APP
+
+A. SERVER
+
+Subir o servidor
+1. Separar as rotas em arquivos separados por estrutura (Bolao, Usuario, etc) dentro da nova pasta routes
+Criado auth.ts, game.ts, guess.ts, pool.ts e user.ts
+Pegar as rotas que estao no arquivo server.ts e transferir para cada um dos arquivos acima
+Nao basta apenas copiar. Precisa usar o conceito de plugins do fastfy da mesma forma que existe middlewares para o express.
+Nada mais é do que separar em multiplos arquivos
+Para isto em cada arquivo é exportada uma funcao que recebe o fastfy como parametro
+ALÉM DISTo para reconhecer o prisma teremos que separar em um arquivo prisma.ts separado dentro da pasta lib
+Colocar o conteudo em prisma.ts e transferir o conteudo das rotas de server.ts para pool.ts. Neste caso só tem uma (count)
+Dentro do arquivo server.ts referenciar o arquivo com a linha 
+Acabou em 12:55
+
+2. Criacao de Usuario (Acess Token do Google) 13:00
+Povoar o arquivo auth.js criando a rota /users para receber o access_token
+
+Criar novo campo na tabela de usuarios dentro do prisma. Vai gravar a informacao do id de Usuario retornado pelo Google
+Rodar depois disto 
+npx prisma migrate dev
+Popular a classe auth.js
+
+3. Geracao TokenJWT
+Link (jwt.io)
+O Token JWT é uma especie de hash criado dentro do backend usando uma chave privada, ele tem uma data de validade, é devolvido para o aplicativo mobile (que salva em algum lugar como um cookie por ex) e este token será enviado para toda requisicao do backend após o login
+As requisicoes ira receber este token, buscara informacoes de usuario que criou este token e ira validá-lo
+Este token substitui as sessoes de autenticacao criadas no passado
+Este token é statetess, ou seja, nao precisa ser armazenado em nenhum lugar
+A ultima parte do JWT token é uma assinatura
+Criacao do toke ocorre em 30:19
+a. Instalar o pacote @fastify/jwt que  é o modulo oficial do fastify para trabalhar com jwt
+npm i @fastify/jwt
+
+b. No arquivo server.ts criar um register para criar o token JWT com um segredo
+
+c. Na rota de autenticacao vc deve criar ele no metodo fastify.jwt.sign e retornar ele no final da rota
+d. Acessando o insomnia e criando esta rota /users vc verá que retornará o toke JWT. Vc pode pegar este token e colocar no site jwt.io e ver os dados dele
+
+4. Validacao JWT 35:45
+Precisamos criar dentro do arquivo de routas de autenticacao uma rota chamada me
+Esta rota vai receber a requsicao e retornar dados do usuario logado. Recebera o JWT token no campo Bearer Token dentro de Auth no Insonmia
+Como vamos usar em varios lugares vamos separar em um local isolado.
+Criar dentro de src a pasta plugins. Criar o arquivo authenticate.ts e colocar o codigo
+
+5. Rota de perfil. Terminou em 41:09
+Criada a rota me anteriormente
+
+6. Criacao de bolao com usuario logado
+41:26
+Alterar o arquivo pool.ts
+A rota de criar um bolao ela pode ser gerada da parte WEB que nao exige autenticacao e de dentro do APP que exige autenticacao
+Mexer na rota post /pools para fazer uma condicional se tem ou nao o OwnerID
+
+Para tirar o erro do sub devemos criar uma pasta @types dentro de src.
+Criar arquivo fastify-jwt.d.ts para conter apenas definicoes
+
+Quando o usuario existe é criado o user. Alem disto precisamos criar o participante tambem na respectiva tabela
+Ou seja quando um usuario cria um bolao obrigatoriamente ele precisa ser participante daquele bolao
+
+7. Entrar em um bolao Inicio 48:02
+Incluir nova rota dentro de pool.ts chamada /pools/join
+
+8. Boloes que eu participo 55:03
+Criar nova rota chamada /pools. Interessante
+
+9. Detalhes de um bolao 01:01:00
+Criar nova rota chamada /pools/:id. Interessante
+
+10. Listagem de jogos de um bolao 01:04:13
+Criar uma rota dentro de game.ts chamada /pools/:id/games
+
+11. Criacao de um palpite 01:11:10
+Criar uma rota dentro de guess.ts chamada /pools/:poolId/games/:gameId/guesses
+
+Alterar o schema.prisma criando na tabela Guess um relacionamento unico
+@@unique([participantId, gameId]) na tabela guesses
+npx prisma migrate dev para surtir efeito
+
+B. MOBILE 1:21:46
+
+1. Navegacao
+2. Instalando o React Navigation
+Documentacao em reactivenavigation.org
+Permite que a gente consiga implementar navegacao no reactive native
+Existe varios tipos de estrategia para implementar navegacao:
+Por ex: a navegacao por stacks que é na parte de cima 
+Ex2: navegacao por tabs que fica na parte de baixo do app
+Vamos usar a estrategia de Tabs
+Instalar o pacote abaixo
+npm install @react-navigation/native
+Depois instalar as dependencias
+npx expo install react-native-screens react-native-safe-area-context
+
+Ver na documentacao a aba Guias para ver a tab navigation
+instalar mais este pacote
+npm install @react-navigation/bottom-tabs
+
+3. Criando as rotas 1:26:37
+Criar dentro de src no projeto mobile uma pasta chamada routes
+Vamos centralizar as rotas da nossa aplicacao
+criar o arquivo app.routes.tsx. Neste arquivo vai ficar quais rotas o usuario vai ter acesso, ou seja, quando ele estiver logado na aplicacao.
+Poderiamos criar rotas de usuario administrativo, etc
+As rotas ficam neste arquivo da seguinte forma
+          <Screen 
+                name="new"
+                component={ New }
+            />
+
+Depois de criar as 2 rotas iniciais criar um arquivo chamado index.tsx dentro da pasta routes
+Neste arquivo estara o container de navegacao para compartilhar as rotas com a nossa aplicacao
+
+Agora usamos a funcao Routes criada dentro de index.tsx dentro do arquivo App.tsx.
+Trocamos na linha 
+fontsLoaded ? <Signin /> : <Loading /> 
+por 
+fontsLoaded ? <Routes /> : <Loading /> 
+
+Quando abrir ver na parte de baixo que existem os botoes de navegacao que vai para diversas screens
+
+Depois vamos colocar os icones personalizados na parte de baixo 1:34:26
+
+4. Customizando o Bottom Tabs 1:44:06
+5. Navegando pela aplicacao 1:44:40
+Agora vamos fazer o clique do botao de ˜Buscar bolao por codigo˜ presente em Pools.tsx ir para a tela de Find.tsx
+Criar uma nova rota chamada Find dentro de app.routes.tsx mas deixa ela indisponível para aparecer na parte de baixo. Para isto criar um botao apontando para uma funcao null
+Alterar o arquivo Pools.tsx que contém o botao e colocar as seguintes linhas em diferentes pontos do codigo
+
+import { useNavigation } from '@react-navigation/native'
+const Navigation = useNavigation();
+onPress={() => navigation.navigate('find')}
+
+Vamos agora implementar a navegacao do botao Voltar da tela Find.tsx que na verdade está no componente Header.tsx.
+No arquivo Header.tsx inserir as linhas
+import { useNavigation } from '@react-navigation/native'
+const Navigation = useNavigation(); 
+e alterar a linha para
+? <ButtonIcon icon={CaretLeft} onPress={()=> navigation.navigate('pools')}/> ou
+poderia usar o goBack
+? <ButtonIcon icon={CaretLeft} onPress={()=> navigation.goBack()}/>
+
+6. Tipagem das rotas 1:50:51
+Incluir na pasta @types criar um novo arquivo chamado navigation.d.ts para criar a nossa tipagem para rotas
+E preencher com o conteudo atual
+
+7. Integracao com backend 1:53:48
+
+8. Instalando o axios
+Biblioteca que permite que facamos requisicoes e obtermos resposta do nosso backend
+npm i axios
+
+9. Configurando acesso a API 1:54:21
+Criar pasta chamada services dentro de src
+Dentro desta pasta criar o arquivo apis.ts
+
+Alterar no projeto server do backend chamado servers.ts
+await fastify.listen({ port: 3333, host: '0.0.0.0' }).
+Antes estava comentado
+
+10. Buscando dados do usuario no backend 1:58:42
+
+Agora vamos na pasta contexts no arquivo AuthContext.tsx
+Inserir as linhas 
+import { api } from '../services/api';
+e implementar o metodo
+async function signInWithGoogle(access_token: string){
+
+  Para testar alterar o arquivo index.tsx dentro de Routes e inserir a rota de Sign
+  abrindo o app e se logando iremos obter o acess_token
+
+  Após isto basta terminar a implementacao do metodo signInWithGoogle
+  No final do metodo note que iremos colocar as informacoes do usuario no estado setUser
+
+11. Inserindo o token no header das requisicoes 02:04:25
+Colocar esta linha dentro do metodo signInWithGoogle
+  api.defaults.headers.common['Authorization'] = `Bearer ${tokenResponse.data.token}`;
+
+12. Redirecionando usuario para rotas da aplicacao 02:07:30
+Alterar o arquivo index.tsx
+Se estiver logado mostra as rotas da aplicacao
+Se nao estiver logado mostra a rota do Signin
+
+=====================================================================
+AULA5 06/11/2022
+=====================================================================
+MOBILE
+
+1. Criando um bolao
+Alterar o arquivo New.tsx
+Para ver o banco no VSCODE tem uma extensao chamada SQLite
+Depois de instalar usar Command+P digitar >SQLLite OpenDatabase
+Abaixo no canto inferior esquerdo a opcao SQLLITE EXPLORER 
+
+
+2. Pools 22:00
+A. Listando os boloes criados
+Editar o arquivo Pools.tsx
+Implementar a funcao fetchPools
+
+MUdamos o nome da tipagem do componente PoolCard.tsx para PoolCardProps
+
+B. Utilizando mensagem de toast
+
+C. Utilizando flatlist 32:52
+O componente FlatList do native base é para listar componentes com performance. Temos a ScroolView tambem mas menos performatica
+
+d. Utilizando o ListEmptyComponent 37:32
+ListEmptyComponent é uma propriedade do FlatList que traz um componente quando a lista esta vazia 
+No nosso caso ele renderizará o componente EmptyPoolList que traz uma mensagem caso o usuario nao tenha nenhum bolão criado para ele. Olhar dentro deste componente.
+
+Tivemos que mexer no arquivo EmptyPoolList.tsx para implementar navegacao dos links que a mensagem do componente tem
+Criamos as 2 linhas abaixo
+import { useNavigation } from '@react-navigation/native';
+const { navigate } = useNavigation();
+E alteramos as 2 a seguir
+<Pressable onPress={() => navigate('find')}>
+<Pressable onPress={() => navigate('new')}>
+
+e. Recarregando a lista quando o foco voltar para a interface 42:15
+Se vc criar um bolao e depois entrar em Meus Boloes nao aparece o bolao criado
+O useEffect é usado quando o componente vai ser renderizado. Como ele estava em memoria ele nao foi executado
+Assim precisamos usar o useFocusEffect no lugar do userAffect do react. Subsituir nos imports e na linha 
+    useFocusEffect(useCallback(() => {
+        fetchPools();
+    }, []));
+Mas precisaremos usar o useCallback do react ni lugar
+
+3. Find
+A. Entrar em um bolao pelo codigo 46:16
+Alterar a tela find.tsx
+Fazer o teste com um bolao nao criado por vc mesmo. Ver no banco pelo codigo
+
+4. Details 57:56
+A. Implementando as opcoes: Palpites e Ranking
+Entrar em pools.tsx e quando clicar em uma das linhas da nossa flatList deve ir para a tela de detalhes
+COlocar esta linha 
+onPress={() => navigate('details', { id: item.id } )}
+
+Criando a screen Details.tsx
+
+Depois alterar em routes o arquivo app.routes.tsx para 
+import { Details } from '../screens/Details';
+e
+            <Screen 
+                name="details"
+                component={Details}
+                options={{ tabBarButton: () => null}}
+            />
+
+Teve que atualizar o componente PoolHeader para acertar PoolCardProps
+
+B. Passando parametros pela rota
+C. Buscando os detalhes do bolao.
+D. Compartilhando o codigo do bolao 1:27:27
+Importar o componente de Share do react-native
+Criar a funcao handleCodeShare
+Alterar o Header.tsx
+
+5.Guesses 1:30:19
+Buscando os jogos
+Ele criou um componente pre configurado dentro da pasta componentes
+Ele usa o Game.tsx dentro de componentes
+Precisa instalar a lib country-list para pegar o nome do pais
+npm install country-list
+Instalar a tipagem tambem
+npm i --save-dev @types/country-list
+
+Usa tambem o componente team react-native-country-flag
+Esta biblioteca tem as bandeirinhas
+npm install --save react-native-country-flag
+
+Registrando palpite
+
+Instalar a biblioteca para formatar a data
+npm install dayjs
+
+6.Variavel de Ambiente 1:59:22
+
+A. Protegendo dados sensiveis
+Alterar por exemplo o arquivo AuthContext.tsx para retirar o dados sensivel clientId
+Criar o arquivo .env e
+Precisamos instalar uma biblioteca
+npm install dotenv babel-plugin-inline-dotenv
+
+Depois de instalar devemos ir no arquivo babel.config.js e inserir
+plugins: ['inline-dotenv']
+
+Para testar basta fazer o fluxo de autenticacao
+Devemos subir o ambiente com a funcao clear
+npx expo start --clear
+
+7.Ranking
+Sera no after 
+
+
+
+
+
+
+
+

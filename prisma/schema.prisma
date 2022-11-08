@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+//model é a tabela dentro do prisma
+//cuid é um algortimo que cria o autoincremento. Outro seria o uuid 
+//@id é a chave primaria
+//@unique garante valor unico para o campo
+//@default indica o valor default quando um registro for criado
+//? No campo ownerId é porque o usuario que cria o bolao pode nao estar logado e nao sabermos quem é
+model Pool {
+  id String @id @default(cuid())
+  title String
+  code String @unique
+  createdAt DateTime @default(now())
+  ownerId String?
+
+  participants Participant[]
+  owner User? @relation(fields: [ownerId], references: [id])
+}
+
+//@@unique é um indice unico onde nao pode existir uma linha desta tabela com dois valores iguais para estes 2 campos
+model Participant {
+  id String @id @default(cuid())
+  userId String
+  poolId String
+
+  guesses Guess[]
+  user User @relation(fields: [userId], references: [id])
+  pool Pool @relation(fields: [poolId], references: [id])
+
+  @@unique([userId,poolId ])
+}
+
+// usar o ? depois do tipo da variavel significa que o campo pode ser null
+model User {
+  id String @id @default(cuid())
+  name String
+  email String
+  googleId String? @unique
+  avatarUrl String?
+  createdAt DateTime @default(now())
+
+//Sempre colocar informacoes relevantes e claras do que este relacionamento significa
+  participantingAt Participant[]
+  ownPools Pool[]
+}
+
+// tabela de jogos
+// guesses eh para dizer que dentro de um game pode ter varios palpites. Nao cria coluna no banco de dados
+model Game {
+  id String @id @default(cuid())
+  date DateTime
+  firstTeamCountryCode String
+  secondTeamCountryCode String
+
+  guesses Guess[]
+}
+
+//Tabela de Palpites
+// Relations cria um relacionamento entre a tabela Guess e Game entre os dois campos mencionados. Nao cria coluna no banco de dados
+model Guess {
+  id String @id @default(cuid())
+  firstTeamPoints Int
+  secondTeamPoints Int
+  createdAt DateTime @default(now())
+  gameId String
+  participantId String
+
+  participant Participant @relation(fields: [participantId], references: [id])
+  game Game @relation(fields: [gameId], references: [id])
+
+  @@unique([participantId, gameId])
+}
